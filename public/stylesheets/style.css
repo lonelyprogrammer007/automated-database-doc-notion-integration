@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-  max-width: 960px;
+  max-width: 1100px; /* Increased width for new column */
   margin: 0 auto;
   background-color: #fff;
   padding: 40px;
@@ -137,6 +137,7 @@ a:hover {
   border: 1px solid #ddd;
   padding: 12px;
   text-align: left;
+  vertical-align: top; /* Align content to the top */
 }
 
 .properties-table th {
@@ -144,13 +145,43 @@ a:hover {
   font-weight: bold;
 }
 
-.formula-code code {
+.dependencies-cell strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.dependencies-cell ul {
+    margin: 5px 0 0 0;
+    padding-left: 20px;
+}
+
+.dependencies-cell li {
+    margin-bottom: 4px;
+}
+
+.formula-details code {
   background-color: #e9ecef;
   padding: 4px 8px;
   border-radius: 4px;
   font-family: 'Courier New', Courier, monospace;
   white-space: pre-wrap;
   word-wrap: break-word;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.db-relation, .relation-prop, .rollup-prop, .rollup-func {
+    background-color: #e0e7ff;
+    color: #4338ca;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+}
+
+.rollup-details div {
+    margin-bottom: 5px;
 }
 
 .not-applicable {
@@ -164,9 +195,13 @@ a:hover {
     font-size: 0.85em;
     color: #fff;
     background-color: #6c757d;
+    display: inline-block;
+    white-space: nowrap;
 }
 
 .property-type-formula { background-color: #28a745; }
+.property-type-relation { background-color: #6f42c1; }
+.property-type-rollup { background-color: #e83e8c; }
 .property-type-title { background-color: #007bff; }
 .property-type-rich_text { background-color: #17a2b8; }
 .property-type-number { background-color: #fd7e14; }

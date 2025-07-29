@@ -13,7 +13,6 @@ const notion = new Client({
 async function getDatabasesFromPage(pageId) {
   try {
     const response = await notion.blocks.children.list({ block_id: pageId });
-    // Filter for blocks that are child databases
     const databaseIds = response.results
       .filter(block => block.type === 'child_database')
       .map(block => block.id);
@@ -25,7 +24,23 @@ async function getDatabasesFromPage(pageId) {
 }
 
 /**
- * Retrieves detailed information about a specific database, including its properties and formulas.
+ * Parses a formula expression to find dependencies on other properties.
+ * @param {string} expression - The formula expression string.
+ * @returns {Array<string>} - An array of property names this formula depends on.
+ */
+function getFormulaDependencies(expression) {
+    if (!expression) return [];
+    const regex = /prop\("(.+?)"\)/g;
+    let matches;
+    const dependencies = new Set();
+    while ((matches = regex.exec(expression)) !== null) {
+        dependencies.add(matches[1]);
+    }
+    return Array.from(dependencies);
+}
+
+/**
+ * Retrieves detailed information about a specific database, including properties, formulas, and relations.
  * @param {string} databaseId - The ID of the Notion database.
  * @returns {Promise<Object>} - A promise that resolves to an object containing database details.
  */
@@ -35,11 +50,33 @@ async function getDatabaseDetails(databaseId) {
     const properties = [];
 
     for (const [name, prop] of Object.entries(response.properties)) {
-      let details = { name: name, type: prop.type, formula: null, template: '' };
+      let details = {
+        name: name,
+        type: prop.type,
+        formula: null,
+        dependencies: [],
+        relation: null,
+        rollup: null,
+        template: ''
+      };
 
-      // Extract the formula expression if the property is a formula
       if (prop.type === 'formula' && prop.formula) {
         details.formula = prop.formula.expression;
+        details.dependencies = getFormulaDependencies(prop.formula.expression);
+      }
+
+      if (prop.type === 'relation' && prop.relation) {
+        details.relation = {
+            database_id: prop.relation.database_id
+        };
+      }
+
+      if (prop.type === 'rollup' && prop.rollup) {
+        details.rollup = {
+            relation_property_name: prop.rollup.relation_property_name,
+            rollup_property_name: prop.rollup.rollup_property_name,
+            function: prop.rollup.function
+        };
       }
       
       properties.push(details);
@@ -68,10 +105,24 @@ async function generateDocumentation(pageId) {
     return [];
   }
 
-  // Use Promise.all to fetch details for all databases concurrently
   const documentation = await Promise.all(
     databaseIds.map(id => getDatabaseDetails(id))
   );
+
+  // Create a map of database IDs to their titles for easy lookup
+  const dbIdToTitleMap = documentation.reduce((acc, db) => {
+      acc[db.id] = db.title;
+      return acc;
+  }, {});
+
+  // Augment documentation with relation titles
+  documentation.forEach(db => {
+      db.properties.forEach(prop => {
+          if (prop.relation && dbIdToTitleMap[prop.relation.database_id]) {
+              prop.relation.database_title = dbIdToTitleMap[prop.relation.database_id];
+          }
+      });
+  });
 
   return documentation;
 }

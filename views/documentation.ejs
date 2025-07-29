@@ -25,7 +25,7 @@
             <tr>
               <th>Property Name</th>
               <th>Type</th>
-              <th>Formula Expression</th>
+              <th>Dependencies & Relations</th>
               <th>Notes (Template)</th>
             </tr>
           </thead>
@@ -34,9 +34,31 @@
               <tr>
                 <td><%= prop.name %></td>
                 <td><span class="property-type property-type-<%= prop.type %>"><%= prop.type %></span></td>
-                <td class="formula-code">
-                  <% if (prop.formula) { %>
-                    <code><%= prop.formula %></code>
+                <td class="dependencies-cell">
+                  <% if (prop.type === 'formula') { %>
+                    <div class="formula-details">
+                      <strong>Formula:</strong>
+                      <code><%= prop.formula %></code>
+                      <% if (prop.dependencies.length > 0) { %>
+                        <strong>Depends on:</strong>
+                        <ul>
+                          <% prop.dependencies.forEach(dep => { %>
+                            <li><%= dep %></li>
+                          <% }); %>
+                        </ul>
+                      <% } %>
+                    </div>
+                  <% } else if (prop.type === 'relation' && prop.relation) { %>
+                    <div class="relation-details">
+                      <strong>Relation to:</strong> 
+                      <span class="db-relation"><%= prop.relation.database_title || prop.relation.database_id %></span>
+                    </div>
+                  <% } else if (prop.type === 'rollup' && prop.rollup) { %>
+                    <div class="rollup-details">
+                      <div><strong>Rollup via:</strong> <span class="relation-prop"><%= prop.rollup.relation_property_name %></span></div>
+                      <div><strong>Of Property:</strong> <span class="rollup-prop"><%= prop.rollup.rollup_property_name %></span></div>
+                      <div><strong>Using:</strong> <span class="rollup-func"><%= prop.rollup.function %></span></div>
+                    </div>
                   <% } else { %>
                     <span class="not-applicable">N/A</span>
                   <% } %>
