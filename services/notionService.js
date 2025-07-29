@@ -31,12 +31,12 @@ async function getDatabasesFromPage(pageId) {
  */
 function humanizeFormula(expression, idToNameMap) {
     if (!expression) return "";
-    // Regex to find Notion's new formula placeholders, e.g., {{notion:block_property:...}}
-    const regex = /\{\{notion:block_property:([^:]+):.*?\}\}/g;
+    // Regex to find Notion's new formula placeholders.
+    const regex = /\{\{notion:block_property:([^:]+):[^{}]*\}\}/g;
 
     return expression.replace(regex, (match, encodedId) => {
-        const propId = decodeURIComponent(encodedId);
-        const propName = idToNameMap[propId];
+        // **FIX**: Use the encoded ID directly for the lookup, without decoding.
+        const propName = idToNameMap[encodedId];
         // Replace with prop("...") syntax if we found a matching property name
         return propName ? `prop("${propName}")` : match; 
     });
@@ -54,11 +54,12 @@ function getFormulaDependencies(expression, idToNameMap) {
     const dependencies = new Set();
     let matches;
 
-    // Regex for new formula format (e.g., {{notion:block_property:id:...}})
-    const v2Regex = /\{\{notion:block_property:([^:]+):.*?\}\}/g;
+    // Regex for new formula format (e.g., {{notion:block_property:id:...}}).
+    const v2Regex = /\{\{notion:block_property:([^:]+):[^{}]*\}\}/g;
     while ((matches = v2Regex.exec(expression)) !== null) {
-        const propId = decodeURIComponent(matches[1]);
-        const propName = idToNameMap[propId];
+        // **FIX**: Use the captured encoded ID directly for the lookup.
+        const encodedId = matches[1];
+        const propName = idToNameMap[encodedId];
         if (propName) {
             dependencies.add(propName);
         }
@@ -83,7 +84,8 @@ async function getDatabaseDetails(databaseId) {
     const response = await notion.databases.retrieve({ database_id: databaseId });
     const properties = [];
 
-    // Create a map from property ID to property name for resolving formula dependencies
+    // Create a map from property ID to property name for resolving formula dependencies.
+    // The key here is the raw `prop.id` which may be URL-encoded.
     const idToNameMap = Object.values(response.properties).reduce((map, prop) => {
         map[prop.id] = prop.name;
         return map;
