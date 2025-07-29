@@ -24,18 +24,52 @@ async function getDatabasesFromPage(pageId) {
 }
 
 /**
+ * Replaces Notion's internal property placeholders in a formula with human-readable prop("...") syntax.
+ * @param {string} expression - The raw formula expression from the Notion API.
+ * @param {Object<string, string>} idToNameMap - A map of property IDs to property names for the current database.
+ * @returns {string} - The human-readable formula string.
+ */
+function humanizeFormula(expression, idToNameMap) {
+    if (!expression) return "";
+    // Regex to find Notion's new formula placeholders, e.g., {{notion:block_property:...}}
+    const regex = /\{\{notion:block_property:([^:]+):.*?\}\}/g;
+
+    return expression.replace(regex, (match, encodedId) => {
+        const propId = decodeURIComponent(encodedId);
+        const propName = idToNameMap[propId];
+        // Replace with prop("...") syntax if we found a matching property name
+        return propName ? `prop("${propName}")` : match; 
+    });
+}
+
+/**
  * Parses a formula expression to find dependencies on other properties.
+ * Handles both new (Formula 2.0) and old formula syntax.
  * @param {string} expression - The formula expression string.
+ * @param {Object<string, string>} idToNameMap - A map of property IDs to property names.
  * @returns {Array<string>} - An array of property names this formula depends on.
  */
-function getFormulaDependencies(expression) {
+function getFormulaDependencies(expression, idToNameMap) {
     if (!expression) return [];
-    const regex = /prop\("(.+?)"\)/g;
-    let matches;
     const dependencies = new Set();
-    while ((matches = regex.exec(expression)) !== null) {
+    let matches;
+
+    // Regex for new formula format (e.g., {{notion:block_property:id:...}})
+    const v2Regex = /\{\{notion:block_property:([^:]+):.*?\}\}/g;
+    while ((matches = v2Regex.exec(expression)) !== null) {
+        const propId = decodeURIComponent(matches[1]);
+        const propName = idToNameMap[propId];
+        if (propName) {
+            dependencies.add(propName);
+        }
+    }
+
+    // Regex for old formula format (e.g., prop("Name")) for backward compatibility
+    const v1Regex = /propKATEX_INLINE_OPEN"([^"]+)"KATEX_INLINE_CLOSE/g;
+    while ((matches = v1Regex.exec(expression)) !== null) {
         dependencies.add(matches[1]);
     }
+
     return Array.from(dependencies);
 }
 
@@ -49,6 +83,12 @@ async function getDatabaseDetails(databaseId) {
     const response = await notion.databases.retrieve({ database_id: databaseId });
     const properties = [];
 
+    // Create a map from property ID to property name for resolving formula dependencies
+    const idToNameMap = Object.values(response.properties).reduce((map, prop) => {
+        map[prop.id] = prop.name;
+        return map;
+    }, {});
+
     for (const [name, prop] of Object.entries(response.properties)) {
       let details = {
         name: name,
@@ -61,8 +101,11 @@ async function getDatabaseDetails(databaseId) {
       };
 
       if (prop.type === 'formula' && prop.formula) {
-        details.formula = prop.formula.expression;
-        details.dependencies = getFormulaDependencies(prop.formula.expression);
+        const rawExpression = prop.formula.expression;
+        // Convert formula to a more human-readable format
+        details.formula = humanizeFormula(rawExpression, idToNameMap);
+        // Extract dependencies from the raw formula
+        details.dependencies = getFormulaDependencies(rawExpression, idToNameMap);
       }
 
       if (prop.type === 'relation' && prop.relation) {
