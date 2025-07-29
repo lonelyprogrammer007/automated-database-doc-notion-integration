@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+  <div class="container">
+    <h1><%= title %></h1>
+    <p>Enter the ID of your Notion page to generate documentation for its databases.</p>
+    
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="error-message"><%= error %></div>
+    <% } %>
+
+    <form action="/generate" method="POST">
+      <div class="form-group">
+        <label for="pageId">Notion Page ID:</label>
+        <input type="text" id="pageId" name="pageId" placeholder="e.g., 1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c" required>
+      </div>
+      <button type="submit" class="btn">Generate Documentation</button>
+    </form>
+    
+    <div class="instructions">
+      <h2>How to get your Page ID:</h2>
+      <ol>
+        <li>Open your Notion page in a web browser.</li>
+        <li>The URL will look like: <code>https://www.notion.so/Your-Page-Title-<b>1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c</b></code></li>
+        <li>The Page ID is the long string of characters at the end of the URL.</li>
+        <li>Make sure you have shared this page with your Notion Integration.</li>
+      </ol>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="btn-back">&larr; Back to Home</a>
+    <h1><%= title %></h1>
+    <p>Documentation generated for databases on page: <strong><%= pageId %></strong></p>
+
+    <% databases.forEach(db => { %>
+      <div class="database-section">
+        <h2>Database: <%= db.title %></h2>
+        <% if (db.description) { %>
+          <p class="database-description"><%= db.description %></p>
+        <% } %>
+        
+        <h3>Properties & Schema</h3>
+        <table class="properties-table">
+          <thead>
+            <tr>
+              <th>Property Name</th>
+              <th>Type</th>
+              <th>Formula Expression</th>
+              <th>Notes (Template)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% db.properties.forEach(prop => { %>
+              <tr>
+                <td><%= prop.name %></td>
+                <td><span class="property-type property-type-<%= prop.type %>"><%= prop.type %></span></td>
+                <td class="formula-code">
+                  <% if (prop.formula) { %>
+                    <code><%= prop.formula %></code>
+                  <% } else { %>
+                    <span class="not-applicable">N/A</span>
+                  <% } %>
+                </td>
+                <td>
+                  <textarea class="notes-template" placeholder="Add your notes here..."></textarea>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% }); %>
+  </div>
+</body>
+</html>
