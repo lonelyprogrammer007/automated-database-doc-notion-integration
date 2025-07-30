@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <link rel='stylesheet' href='/stylesheets/style.css' />
-
-  <!-- Add Highlight.js CSS Theme (GitHub Light) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 </head>
 <body>
@@ -40,8 +38,13 @@
                 <td class="dependencies-cell">
                   <% if (prop.type === 'formula') { %>
                     <div class="formula-details">
-                      <strong>Formula:</strong>
-                      <!-- Standard pre/code block for Highlight.js -->
+                      <div class="formula-header">
+                        <strong>Formula:</strong>
+                        <!-- ADDED: Expand button with an SVG icon -->
+                        <button class="btn-expand" title="Expand Code">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M9 3H3v6h1.5V4.5H9V3zm6 0v1.5h4.5V9H21V3h-6zM9 21v-1.5H4.5V15H3v6h6zm6 0h6v-6h-1.5v4.5H15V21z"></path></svg>
+                        </button>
+                      </div>
                       <pre><code class="language-javascript"><%= prop.formula %></code></pre>
 
                       <% if (prop.dependencies.length > 0) { %>
@@ -79,10 +82,55 @@
     <% }); %>
   </div>
 
-  <!-- Add Highlight.js library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <!-- ADDED: Modal structure for viewing code -->
+  <div id="code-modal" class="modal-hidden">
+    <div class="modal-content">
+      <span class="modal-close-btn">&times;</span>
+      <pre><code id="modal-code" class="language-javascript"></code></pre>
+    </div>
+  </div>
 
-  <!-- Initialize Highlight.js -->
-  <script>hljs.highlightAll();</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>
+    // Initialize Highlight.js for all code blocks on page load
+    hljs.highlightAll();
+
+    // --- Modal Logic ---
+    const modal = document.getElementById('code-modal');
+    const modalCodeElement = document.getElementById('modal-code');
+    const closeModalBtn = document.querySelector('.modal-close-btn');
+
+    // Add event listener to all "Expand" buttons
+    document.querySelectorAll('.btn-expand').forEach(button => {
+      button.addEventListener('click', function() {
+        // Find the code block associated with the clicked button
+        const originalCode = this.closest('.formula-details').querySelector('pre code').textContent;
+        
+        // Set the code content in the modal
+        modalCodeElement.textContent = originalCode;
+        
+        // Re-run highlighting on the modal's code element
+        hljs.highlightElement(modalCodeElement);
+        
+        // Show the modal
+        modal.classList.remove('modal-hidden');
+      });
+    });
+
+    // Function to close the modal
+    function closeModal() {
+      modal.classList.add('modal-hidden');
+    }
+
+    // Close modal when the close button is clicked
+    closeModalBtn.addEventListener('click', closeModal);
+
+    // Close modal when clicking on the background overlay
+    modal.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+  </script>
 </body>
 </html>
