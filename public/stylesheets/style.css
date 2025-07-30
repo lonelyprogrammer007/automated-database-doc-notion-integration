@@ -224,3 +224,24 @@ a:hover {
     resize: vertical;
     box-sizing: border-box;
 }
+
+/*
+ * Highlight.js integration styles
+ */
+
+/* The <pre> tag is the container for the code block.
+   We target it within the table cell for specificity. */
+.dependencies-cell pre {
+  border-radius: 6px;       /* Add rounded corners to the code block */
+  margin: 5px 0 10px 0;     /* Adjust vertical spacing */
+  white-space: pre-wrap;    /* Allow lines to wrap */
+  word-break: break-all;    /* Break long words/strings */
+}
+
+/* The <code> tag holds the actual code.
+   The GitHub theme handles colors, but we can fine-tune the font. */
+.dependencies-cell pre code.hljs { /* .hljs is the class Highlight.js adds */
+  padding: 1em; /* Ensure padding is consistent */
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em; /* Slightly smaller font for dense code blocks */
+}

@@ -5,10 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <link rel='stylesheet' href='/stylesheets/style.css' />
+
+  <!-- Add Highlight.js CSS Theme (GitHub Light) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 </head>
 <body>
   <div class="container">
-    <a href="/" class="btn-back">&larr; Back to Home</a>
+    <a href="/" class="btn-back">← Back to Home</a>
     <h1><%= title %></h1>
     <p>Documentation generated for databases on page: <strong><%= pageId %></strong></p>
 
@@ -38,7 +41,9 @@
                   <% if (prop.type === 'formula') { %>
                     <div class="formula-details">
                       <strong>Formula:</strong>
-                      <code><%= prop.formula %></code>
+                      <!-- Standard pre/code block for Highlight.js -->
+                      <pre><code class="language-javascript"><%= prop.formula %></code></pre>
+
                       <% if (prop.dependencies.length > 0) { %>
                         <strong>Depends on:</strong>
                         <ul>
@@ -73,5 +78,11 @@
       </div>
     <% }); %>
   </div>
+
+  <!-- Add Highlight.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <!-- Initialize Highlight.js -->
+  <script>hljs.highlightAll();</script>
 </body>
 </html>
