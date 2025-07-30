@@ -14,7 +14,7 @@
     <p>Documentation generated for databases on page: <strong><%= pageId %></strong></p>
 
     <% databases.forEach(db => { %>
-      <div class="database-section">
+      <div class="database-section" style="overflow-x: scroll;">
         <h2>Database: <%= db.title %></h2>
         <% if (db.description) { %>
           <p class="database-description"><%= db.description %></p>
@@ -35,17 +35,16 @@
               <tr>
                 <td><%= prop.name %></td>
                 <td><span class="property-type property-type-<%= prop.type %>"><%= prop.type %></span></td>
-                <td class="dependencies-cell">
+                <td class="dependencies-cell" style="overflow-x: scroll;max-width: 200px;">
                   <% if (prop.type === 'formula') { %>
                     <div class="formula-details">
                       <div class="formula-header">
                         <strong>Formula:</strong>
-                        <!-- ADDED: Expand button with an SVG icon -->
                         <button class="btn-expand" title="Expand Code">
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M9 3H3v6h1.5V4.5H9V3zm6 0v1.5h4.5V9H21V3h-6zM9 21v-1.5H4.5V15H3v6h6zm6 0h6v-6h-1.5v4.5H15V21z"></path></svg>
                         </button>
                       </div>
-                      <pre><code class="language-javascript"><%= prop.formula %></code></pre>
+                      <pre style="width: max-content;padding-right: 1rem;"><code style="max-width: fit-content;" class="language-javascript"><%= prop.formula %></code></pre>
 
                       <% if (prop.dependencies.length > 0) { %>
                         <strong>Depends on:</strong>
@@ -82,7 +81,6 @@
     <% }); %>
   </div>
 
-  <!-- ADDED: Modal structure for viewing code -->
   <div id="code-modal" class="modal-hidden">
     <div class="modal-content">
       <span class="modal-close-btn">&times;</span>
@@ -103,14 +101,15 @@
     // Add event listener to all "Expand" buttons
     document.querySelectorAll('.btn-expand').forEach(button => {
       button.addEventListener('click', function() {
-        // Find the code block associated with the clicked button
-        const originalCode = this.closest('.formula-details').querySelector('pre code').textContent;
+        // --- FIX START ---
+        // Get the already-highlighted HTML from the source code block
+        const originalCodeHTML = this.closest('.formula-details').querySelector('pre code').innerHTML;
         
-        // Set the code content in the modal
-        modalCodeElement.textContent = originalCode;
+        // Set the innerHTML of the modal code block to preserve the highlighting
+        modalCodeElement.innerHTML = originalCodeHTML;
         
-        // Re-run highlighting on the modal's code element
-        hljs.highlightElement(modalCodeElement);
+        // The call to hljs.highlightElement() is no longer needed
+        // --- FIX END ---
         
         // Show the modal
         modal.classList.remove('modal-hidden');
