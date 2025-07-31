@@ -27,6 +27,8 @@
               <th>Property Name</th>
               <th>Type</th>
               <th>Dependencies & Relations</th>
+              <th>Used By</th>
+              <th>Can be Empty</th>
               <th>Notes (Template)</th>
             </tr>
           </thead>
@@ -70,6 +72,23 @@
                     <span class="not-applicable">N/A</span>
                   <% } %>
                 </td>
+                <td class="used-by-cell">
+                  <% if (prop.usedBy && prop.usedBy.length > 0) { %>
+                    <ul>
+                      <% prop.usedBy.forEach(user => { %>
+                        <li><%= user %></li>
+                      <% }); %>
+                    </ul>
+                  <% } else { %>
+                    <span class="not-applicable">N/A</span>
+                  <% } %>
+                </td>
+                <td>
+                  <select class="can-be-empty-select">
+                    <option value="true">True</option>
+                    <option value="false" selected>False</option>
+                  </select>
+                </td>
                 <td>
                   <textarea class="notes-template" placeholder="Add your notes here..."></textarea>
                 </td>
@@ -101,15 +120,11 @@
     // Add event listener to all "Expand" buttons
     document.querySelectorAll('.btn-expand').forEach(button => {
       button.addEventListener('click', function() {
-        // --- FIX START ---
         // Get the already-highlighted HTML from the source code block
         const originalCodeHTML = this.closest('.formula-details').querySelector('pre code').innerHTML;
         
         // Set the innerHTML of the modal code block to preserve the highlighting
         modalCodeElement.innerHTML = originalCodeHTML;
-        
-        // The call to hljs.highlightElement() is no longer needed
-        // --- FIX END ---
         
         // Show the modal
         modal.classList.remove('modal-hidden');

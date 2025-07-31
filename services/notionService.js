@@ -160,9 +160,23 @@ async function generateDocumentation(pageId) {
       return acc;
   }, {});
 
-  // Augment documentation with relation titles
+  // Augment documentation with relation titles and calculate "Used By"
   documentation.forEach(db => {
+      // Initialize usedBy array for each property
       db.properties.forEach(prop => {
+          prop.usedBy = [];
+      });
+
+      // Populate the usedBy array
+      db.properties.forEach(prop => {
+          if (prop.dependencies && prop.dependencies.length > 0) {
+              prop.dependencies.forEach(depName => {
+                  const dependentProp = db.properties.find(p => p.name === depName);
+                  if (dependentProp) {
+                      dependentProp.usedBy.push(prop.name);
+                  }
+              });
+          }
           if (prop.relation && dbIdToTitleMap[prop.relation.database_id]) {
               prop.relation.database_title = dbIdToTitleMap[prop.relation.database_id];
           }
