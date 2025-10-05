@@ -1,5 +1,5 @@
 # Notion Documentation Generator
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/lonelyprogrammer007/notion-sdk-js)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/lonelyprogrammer007/automated-database-doc-notion-integration)
 
 This project is a web application that automatically generates documentation for your Notion databases. Provide a Notion Page ID, and the application will fetch all the databases on that page and display their schema, including properties, formulas, and relations.
 
