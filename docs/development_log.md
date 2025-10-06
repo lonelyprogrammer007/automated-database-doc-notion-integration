@@ -97,10 +97,7 @@ NULL
 
 **Key Steps & Commands**
 
-🔴🔴🔴🔴DEPURANDO🔴🔴🔴🔴
-
-The most important commands I ran.
-I will only include the final, successful commands, not the errors or dead ends.
+Null
 
 ```shell
 node --version
@@ -108,8 +105,6 @@ npm install
 ```
 
 **Summary & Learnings**
-
-🔴🔴🔴🔴DEPURANDO🔴🔴🔴🔴
 
 Of course. Here is a holistic overview of the project.
 
