@@ -1,5 +1,5 @@
 **Date:** 2025-10-05
-### **Task: [Primer log con esta técnica]**
+### **Task: [ 📝 - ❯ ] Primer log con esta técnica**
 **My Prompt/Question:**
 > in a professional development flow using the terminal with Gemini CLI What would be the most   professional way to save the history of inputs and outputs of the conversation with the terminal in such a way that professional documentation is generated, for example for a team that actively participates collaborating in a software project but in this case how would I do it for myself who am learning and generating knowledge through the development of this project
  
