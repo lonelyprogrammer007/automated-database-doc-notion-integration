@@ -1,11 +1,11 @@
     
 **Date:** 2025-10-05
 
-### **Task: [A brief, clear title of the goal]**
+### **Task: [ 📝, ❯ ] [A brief, clear title of the goal]**
 
 **My Prompt/Question**
-> The question or prompt I gave to the Gemini CLI. This provides the "why" for the 
-interaction.
+
+    The question or prompt I gave to the Gemini CLI. This provides the "why" for the interaction.
 
 **Key Steps & Commands**
 
