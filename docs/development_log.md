@@ -111,3 +111,64 @@ npm install
 
 🔴🔴🔴🔴DEPURANDO🔴🔴🔴🔴
 
+Of course. Here is a holistic overview of the project.
+
+### Project Overview
+
+This project is a web application designed to automatically generate documentation for Notion databases. Its primary function is to connect to the Notion API, inspect the databases located on a specific Notion page, and then render a clear, user-friendly documentation page that details the schema of those databases.
+
+### Technology Stack
+
+*   **Backend:** Node.js with the Express.js framework.
+*   **Frontend:** EJS (Embedded JavaScript) for server-side HTML templating.
+*   **Core API:** The official Notion API via the `@notionhq/client` library.
+
+### Running the Project
+
+1.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
+2.  **Set Up Environment:** Create a `.env` file in the root directory and add your Notion API key:
+    ```
+    NOTION_API_KEY=your_notion_api_key
+    ```
+3.  **Start the Server:**
+    ```bash
+    npm start
+    ```
+    The application will then be accessible at `http://localhost:3000`.
+
+### Core Dependencies
+
+*   `express`: A minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.
+*   `@notionhq/client`: The official JavaScript client for the Notion API, used for all interactions with Notion.
+*   `ejs`: A simple templating language that lets you generate HTML markup with plain JavaScript.
+*   `dotenv`: A zero-dependency module that loads environment variables from a `.env` file into `process.env`.
+
+### Project Architecture
+
+The project follows a standard Model-View-Controller (MVC)-like pattern, common in Express applications. The responsibilities are clearly separated into different directories.
+
+#### Core Directories
+
+*   **`/services`**: This is the heart of the application's business logic.
+    *   `notionService.js`: Contains all the logic for interacting with the Notion API. It is responsible for fetching database schemas, properties, and other details required for the documentation. It completely abstracts the Notion-specific code from the rest of the application.
+
+*   **`/routes`**: This directory handles the routing layer (the "Controller" in MVC).
+    *   `index.js`: Defines the application's URL endpoints. It receives incoming web requests, calls the appropriate functions in `/services` to fetch data, and then tells the `/views` layer which page to render with that data.
+
+*   **`/views`**: This is the presentation layer (the "View" in MVC).
+    *   It contains `.ejs` template files that are used to generate the final HTML sent to the user's browser. The data fetched by the `/services` and processed by the `/routes` is injected into these templates.
+    *   `index.ejs`: The main landing page with the input form.
+    *   `documentation.ejs`: The template used to display the generated database documentation.
+
+#### Supporting Directories
+
+*   **`/` (Root)**:
+    *   `app.js`: The main entry point of the Express application. It configures the server, sets up middleware (like logging and parsing request bodies), specifies the view engine (EJS), and connects the routes from the `/routes` directory.
+*   **`/bin`**:
+    *   `www`: This script is the actual executable that starts the Node.js HTTP server. It imports the `app.js` module and listens for connections on the configured port.
+*   **`/public`**: Contains all static assets that are served directly to the client without any server-side processing.
+    *   `/stylesheets/style.css`: The primary stylesheet for the application.
+*   **`/docs`**: Contains project documentation files that are not part of the generated web output.
