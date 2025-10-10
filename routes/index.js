@@ -31,19 +31,7 @@ router.post('/generate', async (req, res, next) => {
       pageId: pageId
     });
   } catch (error) {
-    console.error(error);
-    // More specific error messages for the user
-    let userError = 'An error occurred while fetching data from Notion. Please check the console for details.';
-    if (error.code === 'object_not_found' || error.status === 404) {
-        userError = 'The provided Page ID was not found. Please ensure it is correct and that your Notion integration has been shared with that page.';
-    }
-    if (error.code === 'unauthorized' || error.status === 401) {
-        userError = 'The Notion API Key is invalid or has not been provided. Please check your .env file.';
-    }
-    res.render('index', { 
-      title: 'Notion Documentation Generator', 
-      error: userError 
-    });
+    next(error); // Pass the error to the next middleware
   }
 });
 
