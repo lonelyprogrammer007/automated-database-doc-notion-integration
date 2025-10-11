@@ -32,7 +32,7 @@ async function getDatabasesFromPage(pageId) {
 function humanizeFormula(expression, idToNameMap) {
     if (!expression) return "";
     // Regex to find Notion's new formula placeholders.
-    const regex = /\{\{notion:block_property:([^:]+):[^{}]*\}\}/g;
+    const regex = /\{\{notion:block_property:([^:]+):[^{}]*}}/g;
 
     return expression.replace(regex, (match, encodedId) => {
         // **FIX**: Use the encoded ID directly for the lookup, without decoding.
