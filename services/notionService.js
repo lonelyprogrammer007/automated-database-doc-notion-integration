@@ -64,11 +64,16 @@ function getFormulaDependencies(expression, idToNameMap) {
         const propName = idToNameMap[encodedId];
         if (propName) {
             dependencies.add(propName);
+        } else {
+            // This case can happen if a formula references a property that has been deleted.
+            // We log a warning so the user can investigate the broken formula in Notion.
+            console.warn(`[WARN] Found a dangling property reference. Encoded ID "${encodedId}" has no matching property name in the map.`);
         }
     }
 
-    // Regex for old formula format (e.g., prop("Name")) for backward compatibility
-    const v1Regex = /propKATEX_INLINE_OPEN"([^"]+)"KATEX_INLINE_CLOSE/g;
+    // Regex for old formula format (e.g., prop("Name")) for backward compatibility.
+    // This handles both the standard `prop("Name")` and the internal `propKATEX_INLINE_OPEN"Name"KATEX_INLINE_CLOSE` format.
+    const v1Regex = /prop(?:KATEX_INLINE_OPEN)?"([^"]+)"(?:KATEX_INLINE_CLOSE)?/g;
     while ((matches = v1Regex.exec(expression)) !== null) {
         dependencies.add(matches[1]);
     }
