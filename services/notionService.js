@@ -5,6 +5,9 @@ const notion = new Client({
   auth: process.env.NOTION_API_KEY,
 });
 
+// Regex to find Notion's "Formula 2.0" property placeholders.
+const NOTION_V2_FORMULA_REGEX = /\{\{notion:block_property:([^:]+):[^{}]*\}\}/g;
+
 /**
  * Fetches all child database blocks from a given Notion page.
  * @param {string} pageId - The ID of the Notion page.
@@ -31,10 +34,8 @@ async function getDatabasesFromPage(pageId) {
  */
 function humanizeFormula(expression, idToNameMap) {
     if (!expression) return "";
-    // Regex to find Notion's new formula placeholders.
-    const regex = /\{\{notion:block_property:([^:]+):[^{}]*}}/g;
 
-    return expression.replace(regex, (match, encodedId) => {
+    return expression.replace(NOTION_V2_FORMULA_REGEX, (match, encodedId) => {
         // **FIX**: Use the encoded ID directly for the lookup, without decoding.
         const propName = idToNameMap[encodedId];
         // Replace with prop("...") syntax if we found a matching property name
@@ -54,9 +55,10 @@ function getFormulaDependencies(expression, idToNameMap) {
     const dependencies = new Set();
     let matches;
 
-    // Regex for new formula format (e.g., {{notion:block_property:id:...}}).
-    const v2Regex = /\{\{notion:block_property:([^:]+):[^{}]*\}\}/g;
-    while ((matches = v2Regex.exec(expression)) !== null) {
+    // For global regexes used with .exec(), reset lastIndex before the loop.
+    NOTION_V2_FORMULA_REGEX.lastIndex = 0;
+    // Find all dependencies using the new formula format (e.g., {{notion:block_property:id:...}}).
+    while ((matches = NOTION_V2_FORMULA_REGEX.exec(expression)) !== null) {
         // **FIX**: Use the captured encoded ID directly for the lookup.
         const encodedId = matches[1];
         const propName = idToNameMap[encodedId];
