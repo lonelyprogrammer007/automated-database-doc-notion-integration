@@ -6,7 +6,7 @@ const notion = new Client({
 });
 
 // Regex to find Notion's "Formula 2.0" property placeholders.
-const NOTION_V2_FORMULA_REGEX = /\{\{notion:block_property:([^:]+):[^{}]*\}\}/g;
+const NOTION_V2_FORMULA_REGEX = /\{\{notion:block_property:([^:]+):[^{}]*}}/g;
 
 /**
  * Fetches all child database blocks from a given Notion page.
