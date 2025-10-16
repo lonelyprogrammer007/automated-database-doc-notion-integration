@@ -93,6 +93,7 @@ async function getDatabaseDetails(databaseId) {
 
     // Create a map from property ID to property name for resolving formula dependencies.
     // The key here is the raw `prop.id` which may be URL-encoded.
+      // TODO: check for curiosity the response structure in execution
     const idToNameMap = Object.values(response.properties).reduce((map, prop) => {
         map[prop.id] = prop.name;
         return map;
@@ -137,7 +138,7 @@ async function getDatabaseDetails(databaseId) {
     return {
       id: response.id,
       title: response.title.length > 0 ? response.title[0].plain_text : 'Untitled Database',
-      description: response.description.length > 0 ? response.description[0].plain_text : '',
+      description: response.description.length > 0 ? response.description[0].plain_text : 'No database description',
       properties: properties,
     };
   } catch (error) {
