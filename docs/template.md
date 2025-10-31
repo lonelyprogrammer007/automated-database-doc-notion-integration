@@ -1,6 +1,8 @@
     
 **Date:** 2025-10-05
 
+**Model:** Gemini 2.5 pro, Claude, OpenAI, etc
+
 ### **Task: [ 🛠️, ❯, 🌐 ] [A brief, clear title of the goal]**
 
 **My Prompt/Question**
